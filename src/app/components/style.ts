@@ -41,7 +41,7 @@ export const StyledMain = styled.main`
   column-gap: 56px;
 `;
 
-export const LeftSideWrapper = styled.div`
+export const DragAreaWrapper = styled.div`
   display: flex;
   flex-flow: column;
   gap: 12px;
@@ -140,4 +140,14 @@ export const DropSubText = styled.p`
   text-align: center;
   color: #6b7280;
   margin: -8px 0 0;
+`;
+
+type StyledDragWrapperP = {
+  isDragging: boolean;
+};
+
+export const StyledDragWrapper = styled.div<StyledDragWrapperP>`
+  ${({ isDragging }) => ({
+    opacity: isDragging ? 0.5 : 1,
+  })};
 `;

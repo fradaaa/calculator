@@ -1,5 +1,6 @@
 import { DropAreaInfo, DropAreaWrapper, DropSubText, DropText } from "./style";
 import { Inter } from "next/font/google";
+import { useDrop } from "react-dnd";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -7,8 +8,18 @@ const inter = Inter({
 });
 
 const DropArea = () => {
+  const [{ isOver }, drop] = useDrop(
+    () => ({
+      accept: "section",
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }),
+    []
+  );
+
   return (
-    <DropAreaWrapper>
+    <DropAreaWrapper ref={drop}>
       <DropAreaInfo>
         <svg
           width="22"
