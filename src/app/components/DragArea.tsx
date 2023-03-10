@@ -16,8 +16,8 @@ const components: { [k in SectionT]: () => JSX.Element } = {
 const DragArea = () => {
   return (
     <DragAreaWrapper>
-      {Object.values(components).map((Component, i) => (
-        <DragWrapper key={i}>
+      {Object.entries(components).map(([section, Component], i) => (
+        <DragWrapper section={section as SectionT} key={i}>
           <Component />
         </DragWrapper>
       ))}

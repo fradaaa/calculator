@@ -20,12 +20,12 @@ export const SwitchButton = styled.button<SwitchButtonP>`
   align-items: center;
   height: 36px;
   border-radius: 5px;
-  padding: 8px 12px;
   gap: 10px;
   font-weight: 500;
   color: #4d5562;
   font-size: 14px;
   line-height: 15px;
+  cursor: pointer;
   ${({ width, selected }) => ({
     width: `${width}px`,
     background: selected ? "#fff" : "#F3F4F6",
@@ -107,11 +107,17 @@ export const StyledCalcBtn = styled.button<StyledCalcBtnP>`
   text-align: center;
 `;
 
-export const DropAreaWrapper = styled.div`
+type DropAreaWrapperT = {
+  isBuilt: boolean;
+};
+
+export const DropAreaWrapper = styled.div<DropAreaWrapperT>`
   display: flex;
+  flex-flow: column;
   justify-content: center;
-  align-items: center;
-  border: 2px dashed #c4c4c4;
+  align-items: stretch;
+  gap: 12px;
+  border: ${({ isBuilt }) => (isBuilt ? "none" : "2px dashed #c4c4c4")};
   border-radius: 6px;
 `;
 
@@ -144,10 +150,11 @@ export const DropSubText = styled.p`
 
 type StyledDragWrapperP = {
   isDragging: boolean;
+  canDrag: boolean;
 };
 
 export const StyledDragWrapper = styled.div<StyledDragWrapperP>`
-  ${({ isDragging }) => ({
-    opacity: isDragging ? 0.5 : 1,
+  ${({ isDragging, canDrag }) => ({
+    opacity: isDragging || !canDrag ? 0.5 : 1,
   })};
 `;
