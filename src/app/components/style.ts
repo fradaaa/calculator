@@ -1,38 +1,5 @@
 import styled from "@emotion/styled";
 
-export const SwitchContainer = styled.div`
-  display: flex;
-  padding: 1px;
-  width: 100%;
-  background: #f3f4f6;
-  border-radius: 6px;
-`;
-
-type SwitchButtonP = {
-  text?: string;
-  selected?: boolean;
-  width: number;
-};
-
-export const SwitchButton = styled.button<SwitchButtonP>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 36px;
-  border-radius: 5px;
-  gap: 10px;
-  font-weight: 500;
-  color: #4d5562;
-  font-size: 14px;
-  line-height: 15px;
-  cursor: pointer;
-  ${({ width, selected }) => ({
-    width: `${width}px`,
-    background: selected ? "#fff" : "#F3F4F6",
-    border: selected ? "1px solid #e2e3e5" : "none",
-  })}
-`;
-
 export const StyledMain = styled.main`
   display: grid;
   grid-template-columns: 240px 243px;
@@ -47,83 +14,26 @@ export const DragAreaWrapper = styled.div`
   gap: 12px;
 `;
 
-type PaneBgP = {
-  height: number;
-};
-
-export const PanelBg = styled.div<PaneBgP>`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  height: ${({ height }) => `${height}px`};
-  gap: 8px;
-  padding: 4px;
-  background: #ffffff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.06), 0px 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-`;
-
-export const ResultInner = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
-  height: 52px;
-  background: #f3f4f6;
-  width: 100%;
-  padding: 4px 8px;
-`;
-
-export const ResultText = styled.p`
-  font-weight: 800;
-  font-size: 36px;
-  line-height: 44px;
-  text-align: right;
-  color: #111827;
-  margin: 0;
-`;
-
-type StyledCalcBtnP = {
-  width?: number;
-  height?: number;
-  bg?: string;
-  color?: string;
-};
-
-export const StyledCalcBtn = styled.button<StyledCalcBtnP>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  width: ${({ width }) => (width ? `${width}px` : "72px")};
-  height: ${({ height }) => (height ? `${height}px` : "48px")};
-  background: ${({ bg }) => (bg ? bg : "#fff")};
-  border: 1px solid #e2e3e5;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 15px;
-  ${({ color }) => (color ? color : "#000")}
-  text-align: center;
-`;
-
 type DropAreaWrapperT = {
-  isBuilt: boolean;
+  isStarted: boolean;
+  isOver: boolean;
 };
 
 export const DropAreaWrapper = styled.div<DropAreaWrapperT>`
   display: flex;
   flex-flow: column;
-  justify-content: center;
   align-items: stretch;
   gap: 12px;
-  border: ${({ isBuilt }) => (isBuilt ? "none" : "2px dashed #c4c4c4")};
+  border: ${({ isStarted }) => (isStarted ? "none" : "2px dashed #c4c4c4")};
   border-radius: 6px;
+  background: ${({ isOver }) => (isOver ? "#F0F9FF" : "")};
 `;
 
 export const DropAreaInfo = styled.div`
   display: flex;
   flex-flow: column;
+  height: 100%;
+  justify-content: center;
   align-items: center;
   gap: 12px;
   text-align: center;

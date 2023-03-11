@@ -1,5 +1,5 @@
-import SwitchState from "./SwitchState";
 import DragArea from "./DragArea";
 import DropArea from "./DropArea";
+import SwitchPanel from "./SwitchPanel";
 
-export { SwitchState, DragArea, DropArea };
+export { DragArea, DropArea, SwitchPanel };

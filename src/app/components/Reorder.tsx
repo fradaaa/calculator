@@ -1,18 +1,27 @@
-import { SectionT } from "@/types";
-import { useRef } from "react";
-import { useDrag, useDrop, XYCoord } from "react-dnd";
+import { DragItemT, SectionT } from "@/types";
+import { useRef, useState } from "react";
+import { useDrag, useDrop } from "react-dnd";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { moveSection } from "../redux/slices/mainSlice";
-import ButtonsPanel from "./ButtonsPanel";
-import EqualsBtn from "./EqualsBtn";
-import Result from "./Result";
-import SignsPanel from "./SignsPanel";
+import { DigitsPanel, EqualsBtn, Result, SignsPanel } from "./parts";
 
 const components: { [k in SectionT]: () => JSX.Element } = {
   result: Result,
   signs: SignsPanel,
-  buttons: ButtonsPanel,
+  buttons: DigitsPanel,
   equals: EqualsBtn,
+};
+
+const getDropIndicatorStyle = (data: {
+  direction: "top" | "bottom";
+  pos: number;
+}): React.CSSProperties => {
+  const { direction, pos } = data;
+  return {
+    position: "absolute",
+    left: "-4px",
+    [direction]: pos,
+  };
 };
 
 type DragWrapperP = {
@@ -21,16 +30,17 @@ type DragWrapperP = {
   children?: React.ReactNode;
 };
 
-const Reorder = ({ section, index, children }: DragWrapperP) => {
+const Reorder = ({ section, index }: DragWrapperP) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [dropPos, setDropPos] = useState<number | null>(null);
   const switchState = useAppSelector((state) => state.main.switchState);
   const dispatch = useAppDispatch();
 
   const Section = components[section];
 
-  const [, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: "section",
-    hover(item: { section: SectionT; index: number }, monitor) {
+    hover(item: DragItemT) {
       if (!ref.current) {
         return;
       }
@@ -41,60 +51,63 @@ const Reorder = ({ section, index, children }: DragWrapperP) => {
         return;
       }
 
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-
-      // Get vertical middle
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-
-      // Get pixels to the top
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-      console.log(hoverClientY);
-
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+      setDropPos(-6);
+    },
+    drop: (item) => {
+      if (!ref.current) {
         return;
       }
 
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
         return;
       }
 
-      // Time to actually perform the action
-      dispatch(moveSection({ dragIndex, hoverIndex }));
+      dispatch(moveSection({ dragIndex, hoverIndex, section: item.section }));
 
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
       item.index = hoverIndex;
     },
+    canDrop: (item) => item.section !== section,
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+      canDrop: !!monitor.canDrop(),
+    }),
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [, drag] = useDrag({
     type: "section",
     item: () => {
       return { section, index };
     },
-    collect: (monitor: any) => ({
-      isDragging: monitor.isDragging(),
-    }),
-    canDrag: () => switchState === "constructor",
+    canDrag: () =>
+      section === "result" ? false : switchState === "constructor",
   });
 
   drag(drop(ref));
 
   return (
-    <div ref={ref}>
+    <div ref={ref} style={{ position: "relative" }}>
+      {isOver && dropPos && canDrop && (
+        <svg
+          width="250"
+          height="6"
+          viewBox="0 0 250 6"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{
+            position: "absolute",
+            left: "-4px",
+            top: dropPos,
+          }}
+        >
+          <path
+            d="M0.113249 3L3 5.88675L5.88675 3L3 0.113249L0.113249 3ZM249.887 3L247 0.113249L244.113 3L247 5.88675L249.887 3ZM3 3.5H247V2.5H3V3.5Z"
+            fill="#5D5FEF"
+          />
+        </svg>
+      )}
       <Section />
     </div>
   );

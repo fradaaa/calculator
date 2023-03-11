@@ -5,29 +5,30 @@ import { StyledDragWrapper } from "./style";
 
 type DragWrapperP = {
   section: SectionT;
+  index: number;
   children: React.ReactNode;
 };
 
-const DragWrapper = ({ section, children }: DragWrapperP) => {
-  const switchState = useAppSelector((state) => state.main.switchState);
-  const constructorOrder = useAppSelector(
+const DragAreaItem = ({ section, index, children }: DragWrapperP) => {
+  const constructorState = useAppSelector(
     (state) => state.main.constructorState
   );
+  const {} = constructorState;
 
   const [{ isDragging, canDrag }, drag] = useDrag(
     () => ({
       type: "section",
       item: {
         section,
+        index: index + 4,
       },
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
         canDrag: !!monitor.canDrag(),
       }),
-      canDrag: () =>
-        !constructorOrder.includes(section) ?? switchState === "constructor",
+      canDrag: () => !constructorState.includes(section),
     }),
-    [switchState, section]
+    [constructorState, section]
   );
 
   return (
@@ -37,4 +38,4 @@ const DragWrapper = ({ section, children }: DragWrapperP) => {
   );
 };
 
-export default DragWrapper;
+export default DragAreaItem;

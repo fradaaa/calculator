@@ -1,15 +1,15 @@
-import { SwitchButton, SwitchContainer } from "./style";
+import { SwitchStateT } from "@/types";
 import { Inter } from "next/font/google";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { updateSwitchState } from "../redux/slices/mainSlice";
-import { SwitchStateT } from "@/types";
+import { SwitchButton, SwitchContainer } from "./parts/style";
 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
 });
 
-const SwitchState = () => {
+const SwitchPanel = () => {
   const switchState = useAppSelector((state) => state.main.switchState);
   const dispatch = useAppDispatch();
 
@@ -76,4 +76,4 @@ const SwitchState = () => {
   );
 };
 
-export default SwitchState;
+export default SwitchPanel;

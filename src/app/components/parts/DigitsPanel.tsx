@@ -1,5 +1,7 @@
 import { PanelBg, StyledCalcBtn } from "./style";
 import { Inter } from "next/font/google";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { updateNumber } from "../../redux/slices/mainSlice";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -8,7 +10,10 @@ const inter = Inter({
 
 const buttons = "7894561230,";
 
-const ButtonsPanel = () => {
+const DigitsPanel = () => {
+  const switchState = useAppSelector((state) => state.main.switchState);
+  const dispatch = useAppDispatch();
+
   return (
     <PanelBg height={224}>
       {buttons.split("").map((text, i) => (
@@ -16,6 +21,8 @@ const ButtonsPanel = () => {
           key={i}
           width={text === "0" ? 152 : undefined}
           className={inter.className}
+          onClick={() => dispatch(updateNumber(text))}
+          state={switchState}
         >
           {text}
         </StyledCalcBtn>
@@ -24,4 +31,4 @@ const ButtonsPanel = () => {
   );
 };
 
-export default ButtonsPanel;
+export default DigitsPanel;
