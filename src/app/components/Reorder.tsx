@@ -75,11 +75,17 @@ const Reorder = ({ section, index }: DragWrapperP) => {
 
   drag(drop(ref));
 
+  const handleDoubleClick = () => {
+    if (switchState === "runtime") return;
+
+    dispatch(removeSection(section));
+  };
+
   return (
     <div
       ref={ref}
       style={{ position: "relative" }}
-      onDoubleClick={() => dispatch(removeSection(section))}
+      onDoubleClick={handleDoubleClick}
     >
       {isOver && dropPos && canDrop && (
         <svg
