@@ -9,6 +9,7 @@ type State = {
   prevResult: string;
   sign: SignT;
   isNewNumber: boolean;
+  isCalculated: boolean;
   error: string | null;
 };
 
@@ -20,6 +21,7 @@ const initialState: State = {
   prevResult: "",
   sign: "",
   isNewNumber: true,
+  isCalculated: false,
   error: null,
 };
 
@@ -45,6 +47,7 @@ export const mainSlice = createSlice({
       state.prevResult = "";
       state.sign = "";
       state.error = null;
+      state.isCalculated = false;
     },
     updateConstructorState: (state, action: PayloadAction<DragItemT>) => {
       const { index, section } = action.payload;
@@ -90,6 +93,8 @@ export const mainSlice = createSlice({
       } else {
         state.displayData += action.payload;
       }
+
+      state.isCalculated = false;
     },
     updateSign: (state, action: PayloadAction<SignT>) => {
       state.sign = action.payload;
@@ -111,6 +116,7 @@ export const mainSlice = createSlice({
       state.displayData = res;
       state.prevResult = res;
       state.isNewNumber = true;
+      state.isCalculated = true;
     },
   },
 });

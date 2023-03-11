@@ -1,8 +1,8 @@
-import { SignT } from "@/types";
+import { PanelBg, StyledCalcBtn } from "./style";
 import { Inter } from "next/font/google";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { updateSign } from "../../redux/slices/mainSlice";
-import { PanelBg, StyledCalcBtn } from "./style";
+import { performCalculation, updateSign } from "../../redux/slices/mainSlice";
+import { SignT } from "@/types";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,7 +13,16 @@ const signs = "/х-+";
 
 const SignsPanel = () => {
   const switchState = useAppSelector((state) => state.main.switchState);
+  const isCalculated = useAppSelector((state) => state.main.isCalculated);
   const dispatch = useAppDispatch();
+
+  const handleClick = (text: string) => () => {
+    if (!isCalculated) {
+      dispatch(performCalculation());
+    }
+
+    dispatch(updateSign(text as SignT));
+  };
 
   return (
     <PanelBg height={56}>
@@ -22,7 +31,7 @@ const SignsPanel = () => {
           key={i}
           width={52}
           className={inter.className}
-          onClick={() => dispatch(updateSign(text as SignT))}
+          onClick={handleClick(text)}
           state={switchState}
         >
           {text}
