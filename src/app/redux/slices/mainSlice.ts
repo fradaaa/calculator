@@ -1,5 +1,6 @@
 import { DragItemT, MoveItemT, SectionT, SignT, SwitchStateT } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import Decimal from "decimal.js";
 
 type State = {
   switchState: SwitchStateT;
@@ -25,11 +26,13 @@ const initialState: State = {
   error: null,
 };
 
-const signsActions: { [k in SignT]: (a: string, b: string) => number } = {
-  "+": (a, b) => parseFloat(a) + parseFloat(b),
-  "-": (a, b) => parseFloat(a) - parseFloat(b),
-  "/": (a, b) => parseFloat(a) / parseFloat(b),
-  х: (a, b) => parseFloat(a) * parseFloat(b),
+const signsActions: {
+  [k in SignT]: (a: number, b: number) => Decimal | number;
+} = {
+  "+": (a, b) => new Decimal(a).add(new Decimal(b)),
+  "-": (a, b) => new Decimal(a).sub(new Decimal(b)),
+  "/": (a, b) => new Decimal(a).dividedBy(new Decimal(b)),
+  х: (a, b) => new Decimal(a).mul(new Decimal(b)),
   "": () => 42,
 };
 
@@ -86,19 +89,23 @@ export const mainSlice = createSlice({
       if (state.displayData.length === 16) return;
 
       const newNumber = state.displayData + action.payload;
-      if ((newNumber.match(/,/g) || []).length > 1) return;
+      if (
+        (newNumber.match(/,/g) || []).length > 1 &&
+        !state.isCalculated &&
+        !state.sign
+      )
+        return;
 
-      if (state.displayData === "0" || state.sign !== "") {
-        if (state.isNewNumber && action.payload !== ",") {
-          state.displayData = action.payload;
-          state.isNewNumber = false;
-        } else {
-          state.displayData += action.payload;
-        }
-        state.curResult = state.displayData;
+      if (state.isNewNumber) {
+        state.displayData = action.payload !== "," ? action.payload : "0,";
+        state.isNewNumber = false;
       } else {
+        if (state.displayData.includes(",") && action.payload === ",") return;
+
         state.displayData += action.payload;
       }
+
+      state.curResult = state.displayData;
 
       state.isCalculated = false;
     },
@@ -116,8 +123,8 @@ export const mainSlice = createSlice({
       }
 
       const calculate = signsActions[state.sign];
-      const a = state.prevResult.replace(",", ".");
-      const b = state.curResult.replace(",", ".");
+      const a = parseFloat(state.prevResult.replace(",", "."));
+      const b = parseFloat(state.curResult.replace(",", "."));
       const res = String(calculate(a, b)).replace(".", ",");
       state.displayData = res;
       state.prevResult = res;
