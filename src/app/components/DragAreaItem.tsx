@@ -1,4 +1,5 @@
 import { SectionT } from "@/types";
+import { useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
 import { useAppSelector } from "../redux/hooks";
 import { StyledDragWrapper } from "./style";
@@ -13,9 +14,15 @@ const DragAreaItem = ({ section, index, children }: DragWrapperP) => {
   const constructorState = useAppSelector(
     (state) => state.main.constructorState
   );
-  const {} = constructorState;
+  const [isDraggable, setIsDraggable] = useState(
+    !constructorState.includes(section)
+  );
 
-  const [{ isDragging, canDrag }, drag] = useDrag(
+  useEffect(() => {
+    setIsDraggable(!constructorState.includes(section));
+  }, [constructorState, section]);
+
+  const [{ isDragging }, drag] = useDrag(
     () => ({
       type: "section",
       item: {
@@ -24,15 +31,14 @@ const DragAreaItem = ({ section, index, children }: DragWrapperP) => {
       },
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
-        canDrag: !!monitor.canDrag(),
       }),
-      canDrag: () => !constructorState.includes(section),
+      canDrag: () => isDraggable,
     }),
-    [constructorState, section]
+    [isDraggable, constructorState]
   );
 
   return (
-    <StyledDragWrapper ref={drag} isDragging={isDragging} canDrag={canDrag}>
+    <StyledDragWrapper ref={drag} isDragging={isDragging} canDrag={isDraggable}>
       {children}
     </StyledDragWrapper>
   );
