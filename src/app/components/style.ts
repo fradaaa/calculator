@@ -6,6 +6,10 @@ export const StyledMain = styled.main`
   grid-template-rows: 38px 448px;
   row-gap: 30px;
   column-gap: 56px;
+  padding: 25px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 4px 6px 12px #393939;
 `;
 
 export const DragAreaWrapper = styled.div`
