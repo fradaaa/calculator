@@ -2,7 +2,7 @@ import { DragItemT, SectionT } from "@/types";
 import { useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { moveSection } from "../redux/slices/mainSlice";
+import { moveSection, removeSection } from "../redux/slices/mainSlice";
 import { DigitsPanel, EqualsBtn, Result, SignsPanel } from "./parts";
 
 const components: { [k in SectionT]: () => JSX.Element } = {
@@ -10,18 +10,6 @@ const components: { [k in SectionT]: () => JSX.Element } = {
   signs: SignsPanel,
   buttons: DigitsPanel,
   equals: EqualsBtn,
-};
-
-const getDropIndicatorStyle = (data: {
-  direction: "top" | "bottom";
-  pos: number;
-}): React.CSSProperties => {
-  const { direction, pos } = data;
-  return {
-    position: "absolute",
-    left: "-4px",
-    [direction]: pos,
-  };
 };
 
 type DragWrapperP = {
@@ -88,7 +76,11 @@ const Reorder = ({ section, index }: DragWrapperP) => {
   drag(drop(ref));
 
   return (
-    <div ref={ref} style={{ position: "relative" }}>
+    <div
+      ref={ref}
+      style={{ position: "relative" }}
+      onDoubleClick={() => dispatch(removeSection(section))}
+    >
       {isOver && dropPos && canDrop && (
         <svg
           width="250"

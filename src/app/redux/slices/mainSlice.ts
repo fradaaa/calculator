@@ -75,6 +75,12 @@ export const mainSlice = createSlice({
         state.constructorState.splice(hoverIndex, 0, prevSection);
       }
     },
+    removeSection: (state, action: PayloadAction<SectionT>) => {
+      const index = state.constructorState.findIndex(
+        (item) => item === action.payload
+      );
+      state.constructorState.splice(index, 1);
+    },
     updateNumber: (state, action: PayloadAction<string>) => {
       if (state.displayData === "0" && action.payload === "0") return;
       if (state.displayData.length === 16) return;
@@ -128,6 +134,7 @@ export const {
   updateSign,
   performCalculation,
   updateConstructorState,
+  removeSection,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;
